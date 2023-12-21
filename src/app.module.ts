@@ -12,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { FeedBackModule } from './feed-back/feed-back.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     UsersModule,
     AuthModule,
+    FeedBackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

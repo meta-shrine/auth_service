@@ -22,25 +22,28 @@ directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUM
 
 directive @override(from: String!) on FIELD_DEFINITION
 
-type Office {
-  _id: ID!
-  id: ID!
-  title: String!
-  units: [String!]!
-  areas: [String!]!
-  email: String!
-  location: String!
-}
-
 type User {
   _id: ID!
   id: ID!
   email: String!
-  username: String!
-  designation: String!
+  userName: String!
+  fullName: String!
   password: String!
-  role: String!
-  subAreas: [String!]!
+  type: UserType!
+  isEmailVerified: UserStatus!
+  status: UserStatus!
+}
+
+enum UserType {
+  ADMIN
+  CONTENT_CREATER
+  USER
+  CORPORATE
+}
+
+enum UserStatus {
+  PENDING
+  VERIFIFED
 }
 
 type LoginResponse {
@@ -48,108 +51,42 @@ type LoginResponse {
   user: User!
 }
 
-type Unit {
-  _id: ID!
-  id: ID!
-  name: String!
-}
-
-type SubArea {
-  _id: ID!
-  id: ID!
-  name: String!
-}
-
-type Scope {
-  _id: ID!
-  name: String!
+type FeedBack {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 type Query {
   getUser(email: String!): User!
-  auditors: [User!]!
   users: [User!]!
-  offices: [Office!]!
-  office(id: String!): Office!
-  units: [Unit!]!
-  unit(id: String!): Unit!
-  subAreas: [SubArea!]!
-  subArea(id: Int!): SubArea!
-  scopes: [Scope!]!
-  scope(id: String!): Scope!
+  feedBack(id: Int!): FeedBack!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): User!
-  createOffice(createOfficeInput: CreateOfficeInput!): Office!
-  updateOffice(updateOfficeInput: UpdateOfficeInput!): Office!
-  removeOffice(id: String!): Office!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  createUnit(createUnitInput: CreateUnitInput!): Unit!
-  updateUnit(updateUnitInput: UpdateUnitInput!): Unit!
-  removeUnit(id: String!): Unit!
-  createSubArea(createSubAreaInput: CreateSubAreaInput!): SubArea!
-  updateSubArea(updateSubAreaInput: UpdateSubAreaInput!): SubArea!
-  removeSubArea(id: String!): SubArea!
-  createScope(createScopeInput: CreateScopeInput!): Scope!
-  updateScope(updateScopeInput: UpdateScopeInput!): Scope!
-  removeScope(id: String!): Scope!
+  register(input: VerifyOtp!): User!
+  createFeedBack(createFeedBackInput: CreateFeedBackInput!): FeedBack!
+  updateFeedBack(updateFeedBackInput: UpdateFeedBackInput!): FeedBack!
+  removeFeedBack(id: Int!): FeedBack!
 }
 
 input CreateUserInput {
   email: String!
   username: String!
   password: String!
-  role: String!
-  designation: String!
-  subAreas: [String!]!
+  type: UserType!
 }
 
 input UpdateUserInput {
-  email: String!
-  username: String!
-  password: String
-  role: String
-  designation: String!
-  subAreas: [String!]!
-  id: String!
-}
-
-input CreateOfficeInput {
-  """Office title"""
-  title: String!
-
-  """Office units"""
-  units: [String!]!
-
-  """Office areas"""
-  areas: [String!]!
-
-  """office location"""
-  location: String!
-
-  """office email to send email"""
-  email: String!
-}
-
-input UpdateOfficeInput {
-  """Office title"""
-  title: String
-
-  """Office units"""
-  units: [String!]
-
-  """Office areas"""
-  areas: [String!]
-
-  """office location"""
-  location: String
-
-  """office email to send email"""
   email: String
-  id: String!
+  username: String
+  password: String
+  type: UserType
+  id: String
+  isEmailVerified: UserStatus!
 }
 
 input LoginUserInput {
@@ -157,36 +94,20 @@ input LoginUserInput {
   password: String!
 }
 
-input CreateUnitInput {
-  """Name of the Unit"""
-  name: String!
+input VerifyOtp {
+  email: String!
+  otp: String!
 }
 
-input UpdateUnitInput {
-  """Office title"""
-  name: String!
-  id: String!
+input CreateFeedBackInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
-input CreateSubAreaInput {
-  """Name of the Sub-Area"""
-  name: String!
-}
-
-input UpdateSubAreaInput {
-  name: String!
+input UpdateFeedBackInput {
+  """Example field (placeholder)"""
+  exampleField: Int
   id: Int!
-}
-
-input CreateScopeInput {
-  """Name of the Scope"""
-  name: String!
-}
-
-input UpdateScopeInput {
-  """Scope Name"""
-  name: String!
-  id: String!
 }
 
 scalar link__Import

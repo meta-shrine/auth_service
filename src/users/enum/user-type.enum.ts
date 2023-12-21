@@ -10,3 +10,12 @@ export enum UserType {
 registerEnumType(UserType, {
   name: 'UserType',
 });
+
+export enum UserStatusEnum {
+  PENDING,
+  VERIFIFED,
+}
+
+registerEnumType(UserStatusEnum, {
+  name: 'UserStatus',
+});

@@ -1,4 +1,3 @@
-import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -31,12 +30,6 @@ export class UsersResolver {
   // @UseGuards(JwtAuthGuard)
   getUser(@Args('email') email: string) {
     return this.usersService.findOne(email);
-  }
-
-  @Query((returns) => [User], { name: 'auditors' })
-  // @UseGuards(JwtAuthGuard)
-  getAuditors() {
-    return this.usersService.getAuditors();
   }
 
   @Query(() => [User], { name: 'users' })

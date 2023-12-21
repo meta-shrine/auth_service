@@ -5,10 +5,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './entities/user.entity';
 import { Model } from 'mongoose';
+import { Otp, OtpDocument } from './entities/otpRequest.entity';
+import { generateNumber } from 'src/helper/generateNumber';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Otp.name) private otpModel: Model<OtpDocument>,
+  ) { }
 
   async create(createUserInput: CreateUserInput) {
     try {
@@ -28,7 +33,19 @@ export class UsersService {
       createUserInput.password = password;
 
       const createUser = new this.userModel(createUserInput);
-      return createUser.save();
+      const user = await createUser.save();
+      // Creating expires at 2 min
+      const expiresBy = Math.pow(2, 1) * 60 * 1000;
+      const expiresAt = new Date(new Date().getTime() + expiresBy);
+
+      await this.otpModel.create({
+        email: createUserInput.email,
+        otp: generateNumber(4),
+        expiresAt,
+      });
+      return user;
+
+      //TODO: need to send email with otp for email verification
     } catch (error) {
       console.log(error);
     }
@@ -39,21 +56,25 @@ export class UsersService {
   }
 
   async findOne(email: string) {
-    return await this.userModel.find({ email });
-  }
-
-  async getAuditors(): Promise<User[]> {
-    return await this.userModel.find({ role: 'auditor' });
+    return await this.userModel.findOne({ email });
   }
 
   async update(id: string, updateUserInput: UpdateUserInput): Promise<User> {
     return await this.userModel.findOneAndUpdate({ _id: id }, updateUserInput, {
       new: true,
-      upsert: true,
     });
   }
 
   async remove(id: string) {
     return await this.userModel.findOneAndDelete({ _id: id });
+  }
+
+  async verifyOtpCode(email: string, otp: string): Promise<boolean> {
+    const getCodeRequest = await this.otpModel.findOne({
+      email,
+      otp,
+      expiresAt: { $gte: new Date() },
+    });
+    return !!getCodeRequest;
   }
 }

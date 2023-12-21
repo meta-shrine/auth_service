@@ -1,7 +1,7 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { UserType } from '../enum/user-type.enum';
+import { UserStatusEnum, UserType } from '../enum/user-type.enum';
 
 export type UserDocument = User & Document;
 @Schema()
@@ -16,6 +16,7 @@ export class User {
 
   @Prop({
     required: true,
+    unique: true,
   })
   @Field()
   email: string;
@@ -24,7 +25,13 @@ export class User {
     required: true,
   })
   @Field()
-  username: string;
+  userName: string;
+
+  @Prop({
+    required: true,
+  })
+  @Field()
+  fullName: string;
 
   @Prop({
     required: true,
@@ -39,6 +46,22 @@ export class User {
   })
   @Field(() => UserType)
   type: number;
+
+  @Prop({
+    required: true,
+    enum: UserStatusEnum,
+    default: UserStatusEnum.PENDING,
+  })
+  @Field(() => UserStatusEnum)
+  isEmailVerified: number;
+
+  @Prop({
+    required: true,
+    enum: UserStatusEnum,
+    default: UserStatusEnum.PENDING,
+  })
+  @Field(() => UserStatusEnum)
+  status: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
