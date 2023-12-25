@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -10,6 +15,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Token, TokenDocument } from './entity/token.entity';
 import { Model } from 'mongoose';
 import { toMongoId } from 'src/helper/mongodb.helper';
+import { generateJti } from 'src/helper/jti.helper';
+import { ForgetPasswordInput } from './dto/forget-password.input';
+import { ResetPasswordInput } from './dto/reset-password.input';
 
 @Injectable()
 export class AuthService {
@@ -37,18 +45,20 @@ export class AuthService {
   async login(user: User) {
     try {
       user.password = null;
+      const accessJti = generateJti();
       const access_token = `Bearer ${this.jwtService.sign(
-        { user },
+        { ...user, jti: accessJti },
         { secret: process.env.JWT_SECRET_KEY, expiresIn: '4h' },
       )}`;
+      const refreshJti = generateJti();
       const refresh_token = this.jwtService.sign(
-        { user },
+        { ...user, jti: refreshJti },
         { secret: process.env.JWT_SECRET_KEY, expiresIn: '7d' },
       );
       const tokenPayload = {
         userId: user._id,
-        refrestToken: refresh_token,
-        accessToken: access_token,
+        access_token: accessJti,
+        refresh_token: refreshJti,
       };
       await this.tokenModel.create(tokenPayload);
       return {
@@ -80,8 +90,34 @@ export class AuthService {
   }
 
   async refresh(refresh_token) {
+    if (!refresh_token)
+      throw new BadRequestException(
+        'Refresh token is required please provide refresh token',
+      );
     const decode = await this.jwtService.decode(refresh_token);
-    if (decode) {
+    if (!decode) {
+      throw new UnauthorizedException('Unauthorized');
     }
+  }
+
+  async forgetPassword(forgetPasswordInput: ForgetPasswordInput) {
+    const { email, password, new_password } = forgetPasswordInput;
+
+    const user = await this.userService.findOne(email);
+    if (!user) throw new NotFoundException('User does not exist !!!');
+    if (password !== new_password)
+      throw new NotFoundException('Please enter same password');
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
+    delete user.password;
+    return user;
+  }
+
+  async resetPassword(resetPasswordInput: ResetPasswordInput) {
+    const { email } = resetPasswordInput;
+    const user = await this.userService.findOne(email);
+    if (!user) throw new NotFoundException('User does not exist !!!');
+
+    //TODO: Need to send email for reset password
   }
 }

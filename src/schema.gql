@@ -56,10 +56,21 @@ type FeedBack {
   exampleField: Int!
 }
 
+type EmailTemplate {
+  title: String!
+  slug: String!
+  subject: String!
+  status: String!
+  body: String!
+  keys: String!
+  createdBy: String!
+}
+
 type Query {
   getUser(email: String!): User!
   users: [User!]!
   feedBack(id: Int!): FeedBack!
+  emailTemplete(id: String!): EmailTemplate!
 }
 
 type Mutation {
@@ -71,6 +82,9 @@ type Mutation {
   createFeedBack(createFeedBackInput: CreateFeedBackInput!): FeedBack!
   updateFeedBack(updateFeedBackInput: UpdateFeedBackInput!): FeedBack!
   removeFeedBack(id: Int!): FeedBack!
+  createEmailTemplete(createEmailTempleteInput: CreateEmailTempleteInput!): EmailTemplate!
+  updateEmailTemplete(updateEmailTempleteInput: UpdateEmailTempleteInput!): EmailTemplate!
+  removeEmailTemplete(id: String!): EmailTemplate!
 }
 
 input CreateUserInput {
@@ -108,6 +122,23 @@ input UpdateFeedBackInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
+}
+
+input CreateEmailTempleteInput {
+  title: String!
+  slug: String!
+  subject: String!
+  body: String!
+  status: String!
+}
+
+input UpdateEmailTempleteInput {
+  title: String
+  slug: String
+  subject: String
+  body: String
+  status: String
+  id: String!
 }
 
 scalar link__Import

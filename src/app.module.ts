@@ -13,6 +13,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FeedBackModule } from './feed-back/feed-back.module';
+import { EmailModule } from './email/email.module';
+import { EmailTempleteModule } from './email-templete/email-templete.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { FeedBackModule } from './feed-back/feed-back.module';
     UsersModule,
     AuthModule,
     FeedBackModule,
+    EmailModule,
+    EmailTempleteModule,
   ],
   controllers: [AppController],
   providers: [AppService],
