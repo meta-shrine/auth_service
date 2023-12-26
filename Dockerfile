@@ -4,6 +4,9 @@ WORKDIR /auth
 
 COPY package*.json ./
 
+RUN apk add --no-cache python3 make g++
+
+
 RUN npm install
 
 COPY . .
@@ -18,6 +21,7 @@ ENV NODE_ENV=${NODE_ENV}
 WORKDIR /auth
 
 COPY package*.json ./
+
 
 RUN npm install
 
