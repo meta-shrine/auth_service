@@ -27,7 +27,6 @@ type User {
   id: ID!
   email: String!
   userName: String!
-  fullName: String!
   password: String!
   type: UserType!
   isEmailVerified: UserStatus!
@@ -51,6 +50,10 @@ type LoginResponse {
   user: User!
 }
 
+type MessageResponse {
+  message: String!
+}
+
 type FeedBack {
   """Example field (placeholder)"""
   exampleField: Int!
@@ -66,11 +69,17 @@ type EmailTemplate {
   createdBy: String!
 }
 
+type MailSender {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   getUser(email: String!): User!
   users: [User!]!
   feedBack(id: Int!): FeedBack!
   emailTemplete(id: String!): EmailTemplate!
+  mailSender(id: Int!): MailSender!
 }
 
 type Mutation {
@@ -78,25 +87,29 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  register(input: VerifyOtp!): User!
+  register(input: CreateUserInput!): User!
+  verifyEmail(input: VerifyOtp!): MessageResponse!
   createFeedBack(createFeedBackInput: CreateFeedBackInput!): FeedBack!
   updateFeedBack(updateFeedBackInput: UpdateFeedBackInput!): FeedBack!
   removeFeedBack(id: Int!): FeedBack!
   createEmailTemplete(createEmailTempleteInput: CreateEmailTempleteInput!): EmailTemplate!
   updateEmailTemplete(updateEmailTempleteInput: UpdateEmailTempleteInput!): EmailTemplate!
   removeEmailTemplete(id: String!): EmailTemplate!
+  createMailSender(createMailSenderInput: CreateMailSenderInput!): MailSender!
+  updateMailSender(updateMailSenderInput: UpdateMailSenderInput!): MailSender!
+  removeMailSender(id: Int!): MailSender!
 }
 
 input CreateUserInput {
   email: String!
-  username: String!
+  userName: String!
   password: String!
   type: UserType!
 }
 
 input UpdateUserInput {
   email: String
-  username: String
+  userName: String
   password: String
   type: UserType
   id: String
@@ -139,6 +152,17 @@ input UpdateEmailTempleteInput {
   body: String
   status: String
   id: String!
+}
+
+input CreateMailSenderInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMailSenderInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 scalar link__Import

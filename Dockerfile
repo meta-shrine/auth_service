@@ -1,6 +1,6 @@
 FROM node:16-alpine As development
 
-WORKDIR /auth
+WORKDIR / auth
 
 COPY package*.json ./
 

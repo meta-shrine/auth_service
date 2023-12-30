@@ -17,13 +17,6 @@ export class UsersService {
 
   async create(createUserInput: CreateUserInput) {
     try {
-      const checkUser = await this.userModel.find({
-        email: createUserInput.email,
-      });
-      if (checkUser.length > 0) {
-        return new Error('User Already exists');
-      }
-
       const saltOrRounds = 10;
       const password = await bcrypt.hash(
         createUserInput.password,
@@ -31,8 +24,9 @@ export class UsersService {
       );
 
       createUserInput.password = password;
+      const otp = generateNumber(4, true);
 
-      const createUser = new this.userModel(createUserInput);
+      const createUser = new this.userModel({ ...createUserInput, otp });
       const user = await createUser.save();
       // Creating expires at 2 min
       const expiresBy = Math.pow(2, 1) * 60 * 1000;
@@ -40,7 +34,7 @@ export class UsersService {
 
       await this.otpModel.create({
         email: createUserInput.email,
-        otp: generateNumber(4),
+        otp,
         expiresAt,
       });
       return user;

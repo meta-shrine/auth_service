@@ -31,12 +31,6 @@ export class User {
     required: true,
   })
   @Field()
-  fullName: string;
-
-  @Prop({
-    required: true,
-  })
-  @Field()
   password: string;
 
   @Prop({

@@ -7,6 +7,7 @@ import { GqlAuthGuard } from './gql-auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { CreateUserInput } from 'src/users/dto/create-user.input';
 import { VerifyOtp } from 'src/users/dto/verify-otp.input';
+import { MessageResponse } from './dto/response/message-response';
 
 @Resolver()
 export class AuthResolver {
@@ -26,8 +27,10 @@ export class AuthResolver {
     return this.authService.register(input);
   }
 
-  @Mutation(() => User, { name: 'register' })
+  @Mutation(() => MessageResponse)
   async verifyEmail(@Args('input') input: VerifyOtp) {
-    return this.authService.verifyOtp(input);
+    const data = await this.authService.verifyOtp(input);
+    if (data) return { message: 'Otp verified successfully' };
+    return { message: 'Please provide valid opt' };
   }
 }

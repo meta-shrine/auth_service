@@ -23,7 +23,7 @@ export class Otp {
     required: true,
   })
   @Field()
-  opt: string;
+  otp: string;
 
   @Prop({ required: true })
   @Field()

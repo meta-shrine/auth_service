@@ -18,6 +18,7 @@ import { toMongoId } from 'src/helper/mongodb.helper';
 import { generateJti } from 'src/helper/jti.helper';
 import { ForgetPasswordInput } from './dto/forget-password.input';
 import { ResetPasswordInput } from './dto/reset-password.input';
+import { generateNumber } from 'src/helper/generateNumber';
 
 @Injectable()
 export class AuthService {
